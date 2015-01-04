@@ -24,6 +24,10 @@ Library
                         Network.DNS.Decode
   Other-Modules:        Network.DNS.Internal
                         Network.DNS.StateBinary
+  if os(windows)
+    cpp-options:        -DWINDOWS
+    Build-Depends:      Win32
+    exposed-modules:    Network.DNS.WinResolver
   if impl(ghc >= 7)
     Build-Depends:      base >= 4 && < 5
                       , attoparsec
@@ -53,6 +57,17 @@ Library
                       , network-bytestring
                       , random
                       , resourcet
+
+Executable Example
+  Main-Is: SimpleServer.hs
+  hs-source-dirs: examples
+  default-language: Haskell2010
+  build-depends:   base
+                 , dns
+                 , iproute
+                 , data-default
+                 , bytestring
+                 , network
 
 Test-Suite network
   Type:                 exitcode-stdio-1.0

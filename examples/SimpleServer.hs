@@ -11,6 +11,7 @@ import Data.Maybe
 import Data.Monoid
 import Network.BSD
 import Network.DNS hiding (lookup)
+import Network.DNS.WinResolver
 import Network.Socket hiding (recvFrom)
 import Network.Socket.ByteString
 import System.Environment
@@ -71,7 +72,7 @@ handleRequest conf@Conf{hosts=hosts} rc req =
 handlePacket :: Conf -> Socket -> SockAddr -> S.ByteString -> IO ()
 handlePacket conf@Conf{..} sock addr bs = case decode (fromChunks [bs]) of
     Right req -> do
-        let rc = defaultResolvConf { resolvInfo = RCHostName realDNS }
+        rc <- either error id <$> defaultWinResolvConf
         mrsp <- handleRequest conf rc req
         case mrsp of
             Just rsp ->
